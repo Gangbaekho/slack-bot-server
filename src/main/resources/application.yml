@@ -15,4 +15,4 @@ spring:
         format_sql: true
 slack:
   baseurl: https://slack.com/api
-  token: xoxb-1351772176514-2467085061346-yx4qJpoMxu8RH5cvMyhGaDOP
+  token: xoxb-1351772176514-2467085061346-c2Qg98XvQ3KCt4Ub5qjInjud

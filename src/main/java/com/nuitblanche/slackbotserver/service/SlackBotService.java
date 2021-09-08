@@ -1,12 +1,17 @@
 package com.nuitblanche.slackbotserver.service;
 
+import com.nuitblanche.slackbotserver.dto.*;
+
+import java.util.List;
 import java.util.Map;
 
 public interface SlackBotService {
 
-    Map<String,Object> sendMessageToWorkSpaces(String test);
+    Map<String,Object> openChannelWithUsers(ChannelOpenRequestDto requestDto);
 
-    Map<String,Object> getAllWorkSpaces();
+    List<WorkSpaceResponseDto> getAllWorkSpaces();
 
-    Map<String,Object> getSingleWorkSpace(String workspace);
+    List<UserResponseDto> getAllUsersInWorkSpace(UserGetRequestDto requestDto);
+
+    Map<String,Object> sendMessageToChannel(MessageSendRequestDto requestDto);
 }

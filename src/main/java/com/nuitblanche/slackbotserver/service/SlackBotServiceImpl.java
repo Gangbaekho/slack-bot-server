@@ -1,15 +1,14 @@
 package com.nuitblanche.slackbotserver.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nuitblanche.slackbotserver.component.SlackRestTemplate;
+import com.nuitblanche.slackbotserver.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.aspectj.bridge.Message;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
+import java.awt.image.RescaleOp;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -19,24 +18,56 @@ public class SlackBotServiceImpl implements SlackBotService{
     private final SlackRestTemplate slackRestTemplate;
 
     @Override
-    public Map<String, Object> sendMessageToWorkSpaces(String test) {
+    public Map<String, Object> openChannelWithUsers(ChannelOpenRequestDto requestDto) {
+
+        String requestUrl = "/conversations.open";
+
+        Map<String,Object> params = convertObjectToMap(requestDto);
+
+        return slackRestTemplate.postRequest(requestUrl, params);
+    }
+
+    @Override
+    public List<WorkSpaceResponseDto> getAllWorkSpaces(){
+
+        String requestUrl = "/auth.teams.list";
+
+        Map<String, Object> result = slackRestTemplate.getRequest(requestUrl);
+        ObjectMapper mapper = new ObjectMapper();
+        List<WorkSpaceResponseDto> workSpaces = mapper.convertValue(result.get("teams"),List.class);
+
+        return workSpaces;
+    }
+
+    @Override
+    public List<UserResponseDto> getAllUsersInWorkSpace(UserGetRequestDto requestDto){
+
+        String requestUrl = "/users.list";
+
+        Map<String,Object> params = convertObjectToMap(requestDto);
+        Map<String, Object> result = slackRestTemplate.getRequestWithParameters(requestUrl,params);
+
+        ObjectMapper mapper = new ObjectMapper();
+        List<UserResponseDto> users = mapper.convertValue(result.get("members"),List.class);
+
+        return users;
+    }
+
+    @Override
+    public Map<String, Object> sendMessageToChannel(MessageSendRequestDto requestDto) {
 
         String requestUrl = "/chat.postMessage";
 
-        return slackRestTemplate.getRequest(requestUrl);
+        Map<String,Object> params = convertObjectToMap(requestDto);
+
+        return slackRestTemplate.postRequest(requestUrl,params);
     }
 
-    @Override
-    public Map<String,Object> getAllWorkSpaces(){
+    private Map<String,Object> convertObjectToMap(Object object){
 
-        String requestUrl = "/conversations.list";
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String,Object> params = mapper.convertValue(object,Map.class);
 
-        return slackRestTemplate.getRequest(requestUrl);
-    }
-
-    @Override
-    public Map<String,Object> getSingleWorkSpace(String workspace){
-
-        return null;
+        return params;
     }
 }
