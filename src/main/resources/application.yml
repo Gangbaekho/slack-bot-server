@@ -1,3 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem://localhost/~/testdb;MODE=MYSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        format_sql: true
 slack:
-  apiUrl: test
-  token: test
+  baseurl: https://slack.com/api
+  token: xoxb-1351772176514-2467085061346-yx4qJpoMxu8RH5cvMyhGaDOP

@@ -1,9 +1,14 @@
 package com.nuitblanche.slackbotserver.service;
 
-import com.nuitblanche.slackbotserver.component.CustomRestTemplate;
+import com.nuitblanche.slackbotserver.component.SlackRestTemplate;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
@@ -11,27 +16,22 @@ import java.util.Map;
 @Service
 public class SlackBotServiceImpl implements SlackBotService{
 
-    private final CustomRestTemplate restTemplate;
+    private final SlackRestTemplate slackRestTemplate;
 
     @Override
     public Map<String, Object> sendMessageToWorkSpaces(String test) {
 
-        String postUrl = "/api/v1/projects";
+        String requestUrl = "/chat.postMessage";
 
-        HttpHeaders postHeaders = new HttpHeaders();
-        postHeaders.setContentType(MediaType.APPLICATION_JSON);
-        postHeaders.set("Authorization","Bearer "+ "token");
-        HttpEntity<Map<String,Object>> postRequestEntity = new HttpEntity<>(null,postHeaders);
-
-        ResponseEntity<Map> postResponseEntityOne = restTemplate.exchange(postUrl, HttpMethod.POST,postRequestEntity,Map.class);
-
-        return null;
+        return slackRestTemplate.getRequest(requestUrl);
     }
 
     @Override
     public Map<String,Object> getAllWorkSpaces(){
 
-        return null;
+        String requestUrl = "/conversations.list";
+
+        return slackRestTemplate.getRequest(requestUrl);
     }
 
     @Override
