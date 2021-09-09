@@ -1,7 +1,5 @@
 package com.nuitblanche.slackbotserver.component;
 
-import com.nuitblanche.slackbotserver.dto.MessageSendRequestDto;
-import com.nuitblanche.slackbotserver.dto.UserGetRequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,15 +36,11 @@ public class SlackRestTemplate extends RestTemplate {
 
         Map<String,Object> body = responseEntity.getBody();
 
-        if (responseEntity.getStatusCode().equals(HttpStatus.OK)) {
-            return body;
-        } else {
+        if (!responseEntity.getStatusCode().equals(HttpStatus.OK)) {
             LOGGER.error("requestUri : {}", requestUri);
-            LOGGER.error("{}", body.get("ok"));
-            LOGGER.error("{}", body.get("error"));
-
-            throw new IllegalArgumentException("잘못된 요청입니다.");
+//            throw new IllegalArgumentException("잘못된 요청입니다.");
         }
+        return body;
     }
 
     public Map<String, Object> postRequest(String requestUri, Map<String,Object> params) {

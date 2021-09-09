@@ -1,6 +1,7 @@
 package com.nuitblanche.slackbotserver.controller;
 
 import com.nuitblanche.slackbotserver.dto.*;
+import com.nuitblanche.slackbotserver.response.CommonResult;
 import com.nuitblanche.slackbotserver.response.ListResult;
 import com.nuitblanche.slackbotserver.service.ResponseService;
 import com.nuitblanche.slackbotserver.service.SlackBotService;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@CrossOrigin("*")
 @RestController
 public class SlackBotController {
 
@@ -18,7 +18,7 @@ public class SlackBotController {
     private final SlackBotService slackBotService;
 
     @PostMapping("/api/v1/channels")
-    public Map<String,Object> openChannelWithUsers(@RequestBody ChannelOpenRequestDto requestDto){
+    public Map<String,Object> openChannelWithUsers(@RequestBody SingleOpenChannelRequestDto requestDto){
 
         return slackBotService.openChannelWithUsers(requestDto);
     }
@@ -35,9 +35,15 @@ public class SlackBotController {
         return responseService.getListReulst(slackBotService.getAllUsersInWorkSpace(requestDto));
     }
 
-    @PostMapping("/api/v1/messages")
-    public Map<String,Object> sendMessageToChannel(@RequestBody MessageSendRequestDto requestDto){
+    @PostMapping("/api/v1/messages/single")
+    public Map<String,Object> singleChannelOpenAndSendMessage(@RequestBody SingleOpenChannelRequestDto requestDto){
 
-        return slackBotService.sendMessageToChannel(requestDto);
+        return slackBotService.singleOpenChannelAndSendMessage(requestDto);
+    }
+
+    @PostMapping("/api/v1/messages/multiple")
+    public CommonResult multipleChannelsOpenAndSendMessages(@RequestBody MultipleOpenChannelRequestDto requestDto){
+
+        return slackBotService.multipleOpenChannelsAndSendMessages(requestDto);
     }
 }

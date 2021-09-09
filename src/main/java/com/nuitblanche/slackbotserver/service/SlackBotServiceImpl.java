@@ -3,22 +3,28 @@ package com.nuitblanche.slackbotserver.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nuitblanche.slackbotserver.component.SlackRestTemplate;
 import com.nuitblanche.slackbotserver.dto.*;
+import com.nuitblanche.slackbotserver.response.CommonResult;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.bridge.Message;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.awt.image.RescaleOp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.nuitblanche.slackbotserver.util.ConvertObjectUtils.*;
 
 @RequiredArgsConstructor
 @Service
 public class SlackBotServiceImpl implements SlackBotService{
 
+    private final ResponseService responseService;
     private final SlackRestTemplate slackRestTemplate;
 
     @Override
-    public Map<String, Object> openChannelWithUsers(ChannelOpenRequestDto requestDto) {
+    public Map<String, Object> openChannelWithUsers(SingleOpenChannelRequestDto requestDto) {
 
         String requestUrl = "/conversations.open";
 
@@ -53,21 +59,53 @@ public class SlackBotServiceImpl implements SlackBotService{
         return users;
     }
 
+
     @Override
-    public Map<String, Object> sendMessageToChannel(MessageSendRequestDto requestDto) {
+    public Map<String, Object> singleOpenChannelAndSendMessage(SingleOpenChannelRequestDto requestDto) {
 
-        String requestUrl = "/chat.postMessage";
+        String channelOpenRequestUrl = "/conversations.open";
+        Map<String,Object> channelOpenRequestParams = convertSingleOpenChannelRequestToParams(requestDto);
 
-        Map<String,Object> params = convertObjectToMap(requestDto);
-
-        return slackRestTemplate.postRequest(requestUrl,params);
-    }
-
-    private Map<String,Object> convertObjectToMap(Object object){
-
+        Map<String,Object> channelOpenResponse = slackRestTemplate.postRequest(channelOpenRequestUrl, channelOpenRequestParams);
         ObjectMapper mapper = new ObjectMapper();
-        Map<String,Object> params = mapper.convertValue(object,Map.class);
+        ChannelOpenResponseDto channelOpenResponseDto = mapper.convertValue(channelOpenResponse.get("channel"),ChannelOpenResponseDto.class);
 
-        return params;
+        String sendMessageRequestUrl = "/chat.postMessage";
+
+        Map<String,Object> sendMessageRequestParams = new HashMap<>();
+        sendMessageRequestParams.put("channel",channelOpenResponseDto.getId());
+        sendMessageRequestParams.put("text",requestDto.getText());
+
+        return slackRestTemplate.postRequest(sendMessageRequestUrl,sendMessageRequestParams);
     }
+
+    @Override
+    public CommonResult multipleOpenChannelsAndSendMessages(MultipleOpenChannelRequestDto requestDto) {
+
+        String channelOpenRequestUrl = "/conversations.open";
+        String sendMessageRequestUrl = "/chat.postMessage";
+
+        List<SingleOpenChannelRequestDto> requestDtos = new ArrayList<>();
+        for(String userId : requestDto.getUsers()){
+            requestDtos.add(new SingleOpenChannelRequestDto(userId,requestDto.getText()));
+        }
+
+        for(SingleOpenChannelRequestDto dto : requestDtos){
+
+            Map<String,Object> channelOpenRequestParams = convertSingleOpenChannelRequestToParams(dto);
+
+            Map<String,Object> channelOpenResponse = slackRestTemplate.postRequest(channelOpenRequestUrl, channelOpenRequestParams);
+            ObjectMapper mapper = new ObjectMapper();
+            ChannelOpenResponseDto channelOpenResponseDto = mapper.convertValue(channelOpenResponse.get("channel"),ChannelOpenResponseDto.class);
+
+            Map<String,Object> sendMessageRequestParams = new HashMap<>();
+            sendMessageRequestParams.put("channel",channelOpenResponseDto.getId());
+            sendMessageRequestParams.put("text",requestDto.getText());
+
+            slackRestTemplate.postRequest(sendMessageRequestUrl,sendMessageRequestParams);
+        }
+
+        return responseService.getSuccessResult();
+    }
+
 }
