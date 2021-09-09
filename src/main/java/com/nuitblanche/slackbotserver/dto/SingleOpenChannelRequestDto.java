@@ -12,10 +12,12 @@ public class SingleOpenChannelRequestDto {
 
     private String users;
     private String text;
+    private String botUserId;
 
     @Builder
-    public SingleOpenChannelRequestDto(String users, String text) {
+    public SingleOpenChannelRequestDto(String users, String text, String botUserId) {
         this.users = users;
         this.text = text;
+        this.botUserId = botUserId;
     }
 }

@@ -10,10 +10,12 @@ public class WorkSpaceResponseDto {
 
     private String id;
     private String name;
+    private String botUserId;
 
     @Builder
-    public WorkSpaceResponseDto(String id, String name) {
+    public WorkSpaceResponseDto(String id, String name, String botUserId) {
         this.id = id;
         this.name = name;
+        this.botUserId = botUserId;
     }
 }

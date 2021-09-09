@@ -19,10 +19,10 @@ public class SlackRestTemplate extends RestTemplate {
     @Value("${slack.baseurl}")
     private String slackBaseUrl;
 
-    @Value("${slack.token}")
-    private String slackToken;
+//    @Value("${slack.token}")
+//    private String slackToken;
 
-    public Map<String, Object> getRequest(String requestUri) {
+    public Map<String, Object> getRequest(String requestUri, String slackToken) {
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(slackBaseUrl + requestUri);
 
@@ -43,7 +43,7 @@ public class SlackRestTemplate extends RestTemplate {
         return body;
     }
 
-    public Map<String, Object> postRequest(String requestUri, Map<String,Object> params) {
+    public Map<String, Object> postRequest(String requestUri, Map<String,Object> params, String slackToken) {
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(slackBaseUrl + requestUri);
 
@@ -68,7 +68,7 @@ public class SlackRestTemplate extends RestTemplate {
         }
     }
 
-    public Map<String, Object> getRequestWithParameters(String requestUri, Map<String,Object> params) {
+    public Map<String, Object> getRequestWithParameters(String requestUri, Map<String,Object> params, String slackToken) {
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(slackBaseUrl + requestUri);
 

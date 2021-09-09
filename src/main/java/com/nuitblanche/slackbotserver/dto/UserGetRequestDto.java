@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 public class UserGetRequestDto {
 
     private String team_id;
+    private String botUserId;
 
     @Builder
-    public UserGetRequestDto(String team_id) {
+    public UserGetRequestDto(String team_id, String botUserId) {
         this.team_id = team_id;
+        this.botUserId = botUserId;
     }
 }
