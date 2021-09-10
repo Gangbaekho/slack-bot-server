@@ -34,4 +34,4 @@ build/
 
 ### CUSTOM ###
 *.properties
-*.yml
+application-*.yml

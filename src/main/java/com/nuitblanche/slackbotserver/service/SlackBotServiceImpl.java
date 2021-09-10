@@ -6,14 +6,12 @@ import com.nuitblanche.slackbotserver.domain.Token;
 import com.nuitblanche.slackbotserver.dto.*;
 import com.nuitblanche.slackbotserver.response.CommonResult;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.nuitblanche.slackbotserver.util.ConvertObjectUtils.*;
 
@@ -44,21 +42,18 @@ public class SlackBotServiceImpl implements SlackBotService{
         ObjectMapper mapper = new ObjectMapper();
         List<WorkSpaceResponseDto> workSpaces = new ArrayList<>();
 
-        for(Token token : tokens){
-            Map<String, Object> result = slackRestTemplate.getRequest(requestUrl,token.getToken());
-            List<Map<String,Object>> teams = mapper.convertValue(result.get("teams"),List.class);
+        for(Token token : tokens) {
+            Map<String, Object> result = slackRestTemplate.getRequest(requestUrl, token.getToken());
+            List<Map<String, Object>> teams = mapper.convertValue(result.get("teams"), List.class);
 
             WorkSpaceResponseDto workSpace = WorkSpaceResponseDto.builder()
-                    .id((String)teams.get(0).get("id"))
+                    .id((String) teams.get(0).get("id"))
                     .name((String) teams.get(0).get("name"))
                     .botUserId(token.getBotUserId())
                     .build();
 
             workSpaces.add(workSpace);
         }
-//        Map<String, Object> result = slackRestTemplate.getRequest(requestUrl);
-
-//        List<WorkSpaceResponseDto> workSpaces = mapper.convertValue(result.get("teams"),List.class);
 
         return workSpaces;
     }
