@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -18,9 +17,6 @@ public class SlackRestTemplate extends RestTemplate {
 
     @Value("${slack.baseurl}")
     private String slackBaseUrl;
-
-//    @Value("${slack.token}")
-//    private String slackToken;
 
     public Map<String, Object> getRequest(String requestUri, String slackToken) {
 
@@ -38,7 +34,7 @@ public class SlackRestTemplate extends RestTemplate {
 
         if (!responseEntity.getStatusCode().equals(HttpStatus.OK)) {
             LOGGER.error("requestUri : {}", requestUri);
-//            throw new IllegalArgumentException("잘못된 요청입니다.");
+            throw new IllegalArgumentException("잘못된 요청입니다.");
         }
         return body;
     }

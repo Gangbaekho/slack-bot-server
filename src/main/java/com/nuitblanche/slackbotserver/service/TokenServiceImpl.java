@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,7 +51,6 @@ public class TokenServiceImpl implements TokenService{
         parameters.add("code",requestDto.getCode());
 
         HttpHeaders headers = new HttpHeaders();
-//        headers.set("Content-type", "application/x-www-form-urlencoded");
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity<MultiValueMap<String, String>> formEntity = new HttpEntity<>(parameters, headers);
 
@@ -72,7 +70,10 @@ public class TokenServiceImpl implements TokenService{
             return token;
         }
 
-        return null;
+        return Token.builder()
+                .token(null)
+                .botUserId(null)
+                .build();
     }
 
     @Override
